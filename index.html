@@ -5,54 +5,103 @@
   </head>
 <body>
 
-<canvas id="animationCanvas" width="400" height="400">
-
-
-
+<canvas id="animationCanvas" width="800" height="600">
 
 <script>
-var background = new Image();
+
+
+let background = new Image();
 background.src = "hs-2014-27-a-print.0.0.jpg";
 
+let c = document.getElementById("animationCanvas");
+let ctx = c.getContext("2d");
 
-var x = 0, y = 200;
-var c = document.getElementById("animationCanvas");   
-var ctx = c.getContext("2d");
+//global settings of the game
+let level = 1;
+let lives = 3;
+let ballSpeed;
+let score = 0;
+
+//used to store the benefit or harm circles;
+let beneOrHarmArray = [];
+
+
+//user player
+let x = 35, y = 300; //coordinates of player
 ctx.fillStyle = "red";
 
-console.log(c.width, c.height);
+//harm/benefit
+//let x2 = c.width, y2 = Math.round(Math.random() * 600);
+
+//class for the harm/benefits balls
+
+class BenefitOrHarm{
+
+  constructor(x, y, radius, beneOHarm){
+    this.x = x;
+    this.y = y;
+    this.radius = radius;
+    this.beneOHarm = beneOHarm;
+  }
+
+  //function to create either the benefit or the harm circles
+  create(){
+    ctx.beginPath();
+    ctx.arc(this.x,this.y, 15, 0, Math.PI * 2); //draws circle at that position
+    if(this.beneOHarm === 0){ //harm
+      ctx.fillStyle = "purple";
+    }
+    else if(this.beneOHarm === 1){ //benefit
+      ctx.fillStyle = "green";
+    }
+    ctx.closePath();
+    ctx.fill();
+  }
+}
+
+//shoves in 3 harms to the array
+for (var i=0; i < 3; i++) {
+    let harm = new BenefitOrHarm(c.width, Math.round(Math.random() * 600),20, 0);
+    beneOrHarmArray.push(harm);
+}
+// shoves in 2 benefits to the array
+for (var i=0; i <2; i++) {
+    let benefit = new BenefitOrHarm(c.width, Math.round(Math.random() * 600),20, 1);
+    beneOrHarmArray.push(benefit);
+}
 
 function draw() {
+
   // clear the canvas
   ctx.clearRect(0, 0, c.width, c.height);
 
-  
-  
-  // increment coord to "move" l to r
-  x += 1;
+  // draw the background image
+  ctx.drawImage(background, 0, 0);
 
-  // handle edge condition
-  if (x > c.width) {
-    x -= c.width;
+  for (var i=0; i<beneOrHarmArray.length; i++){
+    console.log("hello");
+    beneOrHarmArray[i].create();
   }
+  // // increment coord to "move" l to r
+  // x += 1;
+  //
+  // // handle edge condition
+  // if (x > c.width) {
+  //   x -= c.width;
+  // }
 
   // draw objects
 
-  // draw the background image
-  ctx.drawImage(background, 0, 0);
-  
+
   // draw a circle
-  // start a new path;  
+  // start a new path;
   //  comment out begin and close path to see what happens
   ctx.beginPath();
-
   //  a circle at the coordinates
-  ctx.arc(x, y, 25, 0, Math.PI * 2);
+  ctx.arc(x, y, 20, 0, Math.PI * 2);
+  ctx.fillStyle = "blue";
   ctx.closePath();
-
   ctx.fill();
-
-
 
   // call again when available
   window.requestAnimationFrame(draw);
