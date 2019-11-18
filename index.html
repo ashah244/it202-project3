@@ -96,18 +96,18 @@ class BenefitOrHarm{
 //get level and change ballspeec of harm for each level. If level inscreases then make sure to give player one more life.
 const getLevel = () => {
   let newBallSpeed = 0;
-  if(score < 5){
+  if(score < 5){ // score is less than 5 make it easy
     level = level + 0;
     newBallSpeed = Math.floor(Math.random() * 10) + 1;
   }
-  else if(score >= 5 && score < 15){
+  else if(score >= 5 && score < 15){ //medium
     if(level === 1){
       level = level + 1;
       lives = lives + 1;
     }
     newBallSpeed = Math.floor(Math.random() * 15) + 5;
   }
-  else{
+  else{ //hard
     if(level === 2){
       level = level + 1;
       lives = lives + 1;
@@ -131,6 +131,26 @@ for (var i=0; i <2; i++) {
     beneOrHarmArray.push(benefit);
 }
 
+
+const moveThePlayer = (e) => {
+    var keyboard = e.keyCode;
+    switch(keyboard) {
+        case 38: // up
+            y = y - 5;
+            break;
+        case 40: // down
+            y = y +5;
+            break;
+        default:
+          break;
+    }
+    e.preventDefault();
+}
+
+window.addEventListener('keydown', moveThePlayer, false);
+
+
+
 const draw = () => {
 
   // clear the canvas
@@ -146,12 +166,30 @@ const draw = () => {
     beneOrHarmArray[i].move();
   }
 
+  // start a new path;
+  ctx.beginPath();
+
+  ctx.font = "20px Arial";
+  ctx.fillStyle = "yellow";
+  ctx.fillText("Score: " + score, 650,50);
+  ctx.fillText("Level: " + level, 550,50);
+  ctx.fillText("Lives: " + lives, 450,50);
+
   //  a circle at the coordinates
   ctx.arc(x, y, 20, 0, Math.PI * 2);
   ctx.fillStyle = "blue";
   ctx.closePath();
   ctx.fill();
 
+  //moveThePlayer();
+
+  //if lives equals 0 then gameover and end function by return
+  if(lives === 0){
+    ctx.font = "100px Arial";
+    ctx.fillStyle = "RED";
+    ctx.fillText("GAME OVER", 100,350);
+    return;
+  }
 
   // call again when available
   window.requestAnimationFrame(draw);
