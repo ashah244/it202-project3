@@ -22,6 +22,8 @@ let lives = 3;
 let ballSpeed = Math.floor(Math.random() * 10) + 1;
 let score = 0;
 let radius = 20;
+let up = false;
+let down = false;
 
 //used to store the benefit or harm circles;
 let beneOrHarmArray = [];
@@ -67,7 +69,7 @@ class BenefitOrHarm{
     //handles check for the border
     if(this.x < radius){
       this.x = c.width;
-      this.y = Math.round(Math.random() * 600);
+      this.y = Math.round(Math.random() * 550);
       this.ballSpeed = getLevel();
     }
 
@@ -77,9 +79,9 @@ class BenefitOrHarm{
     let distance = ((xDistance * xDistance) + (yDistance * yDistance));
     let distanceFormula = Math.sqrt(distance);
 
-    if(distanceFormula <= radius * 1.5){
+    if(distanceFormula <= radius * 2){
       this.x = c.width;
-      this.y = Math.round(Math.random() * 600);
+      this.y = Math.round(Math.random() * 550);
       this.ballSpeed = getLevel();
 
       if(this.beneOHarm === 1){ //increase score
@@ -98,21 +100,21 @@ const getLevel = () => {
   let newBallSpeed = 0;
   if(score < 5){ // score is less than 5 make it easy
     level = level + 0;
-    newBallSpeed = Math.floor(Math.random() * 10) + 1;
+    newBallSpeed = Math.floor(Math.random() * 7) + 1;
   }
   else if(score >= 5 && score < 15){ //medium
     if(level === 1){
       level = level + 1;
       lives = lives + 1;
     }
-    newBallSpeed = Math.floor(Math.random() * 15) + 5;
+    newBallSpeed = Math.floor(Math.random() * 14) + 5;
   }
   else{ //hard
     if(level === 2){
       level = level + 1;
       lives = lives + 1;
     }
-    newBallSpeed = Math.floor(Math.random() * 20) + 10;
+    newBallSpeed = Math.floor(Math.random() * 21) + 10;
   }
 
   return newBallSpeed;
@@ -122,34 +124,29 @@ const getLevel = () => {
 //shoves in 3 harms to the array
 for (var i=0; i < 4; i++) {
     let harmballSpeed = getLevel();
-    let harm = new BenefitOrHarm(c.width, Math.round(Math.random() * 600),20, 0, harmballSpeed);
+    let harm = new BenefitOrHarm(c.width, Math.round(Math.random() * 550),20, 0, harmballSpeed);
     beneOrHarmArray.push(harm);
 }
 // shoves in 2 benefits to the array
 for (var i=0; i <2; i++) {
-    let benefit = new BenefitOrHarm(c.width, Math.round(Math.random() * 600),20, 1, Math.floor(Math.random() * 10) + 1);
+    let benefit = new BenefitOrHarm(c.width, Math.round(Math.random() * 550),20, 1, Math.floor(Math.random() * 10) + 1);
     beneOrHarmArray.push(benefit);
 }
 
 
-const moveThePlayer = (e) => {
-    var keyboard = e.keyCode;
-    switch(keyboard) {
-        case 38: // up
-            y = y - 5;
-            break;
-        case 40: // down
-            y = y +5;
-            break;
-        default:
-          break;
+const moveThePlayer = (event) => {
+    var keyboard = event.which;
+    event.preventDefault();
+
+    if(keyboard === 38){
+      y = y - 15;
     }
-    e.preventDefault();
+    else if(keyboard === 40){
+      y = y + 15;
+    }
 }
 
 window.addEventListener('keydown', moveThePlayer, false);
-
-
 
 const draw = () => {
 
@@ -161,7 +158,6 @@ const draw = () => {
 
   //call the class methods to create the balls and move them;
   for (var i=0; i<beneOrHarmArray.length; i++){
-    console.log("hello");
     beneOrHarmArray[i].create();
     beneOrHarmArray[i].move();
   }
@@ -180,8 +176,6 @@ const draw = () => {
   ctx.fillStyle = "blue";
   ctx.closePath();
   ctx.fill();
-
-  //moveThePlayer();
 
   //if lives equals 0 then gameover and end function by return
   if(lives === 0){
