@@ -19,8 +19,9 @@ let ctx = c.getContext("2d");
 //global settings of the game
 let level = 1;
 let lives = 3;
-let ballSpeed;
+let ballSpeed = Math.floor(Math.random() * 10) + 1;
 let score = 0;
+let radius = 20;
 
 //used to store the benefit or harm circles;
 let beneOrHarmArray = [];
@@ -37,11 +38,12 @@ ctx.fillStyle = "red";
 
 class BenefitOrHarm{
 
-  constructor(x, y, radius, beneOHarm){
+  constructor(x, y, radius, beneOHarm, ballSpeed){
     this.x = x;
     this.y = y;
     this.radius = radius;
     this.beneOHarm = beneOHarm;
+    this.ballSpeed = ballSpeed;
   }
 
   //function to create either the benefit or the harm circles
@@ -57,20 +59,79 @@ class BenefitOrHarm{
     ctx.closePath();
     ctx.fill();
   }
+
+  //move the benefit or harm circles and check for collisions
+  move(){
+
+    this.x = this.x - this.ballSpeed;
+    //handles check for the border
+    if(this.x < radius){
+      this.x = c.width;
+      this.y = Math.round(Math.random() * 600);
+      this.ballSpeed = getLevel();
+    }
+
+    //dectect if circle hit player
+    let xDistance = this.x - x;
+    let yDistance = this.y - y;
+    let distance = ((xDistance * xDistance) + (yDistance * yDistance));
+    let distanceFormula = Math.sqrt(distance);
+
+    if(distanceFormula <= radius * 1.5){
+      this.x = c.width;
+      this.y = Math.round(Math.random() * 600);
+      this.ballSpeed = getLevel();
+
+      if(this.beneOHarm === 1){ //increase score
+        score = score + 1;
+      }
+      else{
+        lives = lives - 1; //decrease lives hit harm
+      }
+    }
+  }
+
 }
 
+//get level and change ballspeec of harm for each level. If level inscreases then make sure to give player one more life.
+const getLevel = () => {
+  let newBallSpeed = 0;
+  if(score < 5){
+    level = level + 0;
+    newBallSpeed = Math.floor(Math.random() * 10) + 1;
+  }
+  else if(score >= 5 && score < 15){
+    if(level === 1){
+      level = level + 1;
+      lives = lives + 1;
+    }
+    newBallSpeed = Math.floor(Math.random() * 15) + 5;
+  }
+  else{
+    if(level === 2){
+      level = level + 1;
+      lives = lives + 1;
+    }
+    newBallSpeed = Math.floor(Math.random() * 20) + 10;
+  }
+
+  return newBallSpeed;
+}
+
+
 //shoves in 3 harms to the array
-for (var i=0; i < 3; i++) {
-    let harm = new BenefitOrHarm(c.width, Math.round(Math.random() * 600),20, 0);
+for (var i=0; i < 4; i++) {
+    let harmballSpeed = getLevel();
+    let harm = new BenefitOrHarm(c.width, Math.round(Math.random() * 600),20, 0, harmballSpeed);
     beneOrHarmArray.push(harm);
 }
 // shoves in 2 benefits to the array
 for (var i=0; i <2; i++) {
-    let benefit = new BenefitOrHarm(c.width, Math.round(Math.random() * 600),20, 1);
+    let benefit = new BenefitOrHarm(c.width, Math.round(Math.random() * 600),20, 1, Math.floor(Math.random() * 10) + 1);
     beneOrHarmArray.push(benefit);
 }
 
-function draw() {
+const draw = () => {
 
   // clear the canvas
   ctx.clearRect(0, 0, c.width, c.height);
@@ -78,30 +139,19 @@ function draw() {
   // draw the background image
   ctx.drawImage(background, 0, 0);
 
+  //call the class methods to create the balls and move them;
   for (var i=0; i<beneOrHarmArray.length; i++){
     console.log("hello");
     beneOrHarmArray[i].create();
+    beneOrHarmArray[i].move();
   }
-  // // increment coord to "move" l to r
-  // x += 1;
-  //
-  // // handle edge condition
-  // if (x > c.width) {
-  //   x -= c.width;
-  // }
 
-  // draw objects
-
-
-  // draw a circle
-  // start a new path;
-  //  comment out begin and close path to see what happens
-  ctx.beginPath();
   //  a circle at the coordinates
   ctx.arc(x, y, 20, 0, Math.PI * 2);
   ctx.fillStyle = "blue";
   ctx.closePath();
   ctx.fill();
+
 
   // call again when available
   window.requestAnimationFrame(draw);
