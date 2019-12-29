@@ -79,7 +79,7 @@ class BenefitOrHarm{
     let distance = ((xDistance * xDistance) + (yDistance * yDistance));
     let distanceFormula = Math.sqrt(distance);
 
-    if(distanceFormula <= radius * 2){
+    if(distanceFormula <= radius * 1.5){
       this.x = c.width;
       this.y = Math.round(Math.random() * 600);
       this.ballSpeed = getLevel();
@@ -109,14 +109,15 @@ const getLevel = () => {
       let background = new Image();
       background.src = "10365874-1x1-700x700.jpg";
     }
-    newBallSpeed = Math.floor(Math.random() * 14) + 5;
+    newBallSpeed = Math.floor(Math.random() * 10) + 1;
   }
   else{ //hard
     if(level === 2){
       level = level + 1;
       lives = lives + 1;
     }
-    newBallSpeed = Math.floor(Math.random() * 21) + 10;
+    //newBallSpeed = Math.floor(Math.random() * 21) + 10;
+    newBallSpeed = Math.floor(Math.random() * 14) + 1;
   }
 
   return newBallSpeed;
