@@ -51,7 +51,7 @@ class BenefitOrHarm{
   //function to create either the benefit or the harm circles
   create(){
     ctx.beginPath();
-    ctx.arc(this.x,this.y, 15, 0, Math.PI * 2); //draws circle at that position
+    ctx.arc(this.x,this.y, 20, 0, Math.PI * 2); //draws circle at that position
     if(this.beneOHarm === 0){ //harm
       ctx.fillStyle = "purple";
     }
@@ -69,7 +69,7 @@ class BenefitOrHarm{
     //handles check for the border
     if(this.x < radius){
       this.x = c.width;
-      this.y = Math.round(Math.random() * 550);
+      this.y = Math.round(Math.random() * 600);
       this.ballSpeed = getLevel();
     }
 
@@ -81,7 +81,7 @@ class BenefitOrHarm{
 
     if(distanceFormula <= radius * 2){
       this.x = c.width;
-      this.y = Math.round(Math.random() * 550);
+      this.y = Math.round(Math.random() * 600);
       this.ballSpeed = getLevel();
 
       if(this.beneOHarm === 1){ //increase score
@@ -106,6 +106,8 @@ const getLevel = () => {
     if(level === 1){
       level = level + 1;
       lives = lives + 1;
+      let background = new Image();
+      background.src = "10365874-1x1-700x700.jpg";
     }
     newBallSpeed = Math.floor(Math.random() * 14) + 5;
   }
@@ -124,12 +126,12 @@ const getLevel = () => {
 //shoves in 3 harms to the array
 for (var i=0; i < 4; i++) {
     let harmballSpeed = getLevel();
-    let harm = new BenefitOrHarm(c.width, Math.round(Math.random() * 550),20, 0, harmballSpeed);
+    let harm = new BenefitOrHarm(c.width, Math.round(Math.random() * 600),20, 0, harmballSpeed);
     beneOrHarmArray.push(harm);
 }
 // shoves in 2 benefits to the array
 for (var i=0; i <2; i++) {
-    let benefit = new BenefitOrHarm(c.width, Math.round(Math.random() * 550),20, 1, Math.floor(Math.random() * 10) + 1);
+    let benefit = new BenefitOrHarm(c.width, Math.round(Math.random() * 600),20, 1, Math.floor(Math.random() * 10) + 1);
     beneOrHarmArray.push(benefit);
 }
 
@@ -140,9 +142,16 @@ const moveThePlayer = (event) => {
 
     if(keyboard === 38){
       y = y - 15;
+
+      if(y < radius){
+        y = radius;
+      }
     }
     else if(keyboard === 40){
       y = y + 15;
+      if(y > c.height - radius){
+        y = c.height - radius;
+      }
     }
 }
 
@@ -182,6 +191,13 @@ const draw = () => {
     ctx.font = "100px Arial";
     ctx.fillStyle = "RED";
     ctx.fillText("GAME OVER", 100,350);
+    return;
+  }
+
+  if(score === 30){
+    ctx.font = "100px Arial";
+    ctx.fillStyle = "GREEN";
+    ctx.fillText("WINNER", 100,350);
     return;
   }
 
